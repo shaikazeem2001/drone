@@ -1,0 +1,25 @@
+sample.fxml
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.canvas.Canvas?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.SampleController">
+   <children>
+      <!-- Adjusted Canvas to the right -->
+      <Canvas fx:id="canvas" height="400" layoutX="671.0" layoutY="195.0" width="275.0" />
+      
+      <TextArea fx:id="messageField" layoutX="20.0" layoutY="195.0" prefHeight="372.0" prefWidth="393.0" />
+      <Button fx:id="startScanBtn" layoutX="14.0" layoutY="164.0" onAction="#startScanAct" text="Start Scan" />
+      <Button fx:id="stopScanBtn" layoutX="112.0" layoutY="164.0" onAction="#stopScanAct" text="Stop Scan" />
+      
+      <ChoiceBox fx:id="Drop" layoutX="200.0" layoutY="164.0" />
+      <Button fx:id="SelectBtn" layoutX="273.0" layoutY="164.0" onAction="#selectAct" text="Select" />
+      <Button fx:id="DeleteBtn" layoutX="349.0" layoutY="164.0" onAction="#deleteAct" text="Delete" />
+      <AnchorPane fx:id="dronecanvas" layoutX="416.0" prefHeight="596.0" prefWidth="538.0" />
+      
+   </children>
+</AnchorPane>
