@@ -1,167 +1,300 @@
-//samplecontroller.java
 package application;
 
-import java.net.URL;
-import java.util.ResourceBundle;
-
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.TextArea;
-import javafx.scene.image.Image;
+import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
-import javafx.animation.AnimationTimer;
+import javafx.scene.image.ImageView;
+import javafx.scene.image.Image;
+import javafx.application.Platform;
+import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Text;
 
-public class SampleController implements Initializable {
+import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
-    @FXML
-    private TextArea messageField;
-
-    @FXML
-    private ChoiceBox<String> Drop;
-    private String[] choices = {"Option 1", "Option 2"};
-
-    @FXML
-    private Button SelectBtn;
+public class SampleController {
 
     @FXML
-    private Button DeleteBtn;
+    private AnchorPane ankordash, maindash, messagedash, cropankor;
+    @FXML
+    private ImageView droneImage;
+    @FXML
+    private Button startScanButton, stopScanButton, changeXButton, changeYButton, changeHeightButton, changeWidthButton;
+    @FXML
+    private TreeView<String> fileTree;
+    @FXML
+    private TextArea messageArea;
+
+    private boolean scanning = false;
+    private double maxWidth;
+    private double maxHeight;
+    private Map<String, Position> farmItems = new HashMap<>();
 
     @FXML
-    private Button startScanBtn;
-    @FXML
-    private Button stopScanBtn;
+    public void initialize() {
+        ankordash.setStyle("-fx-background-color: white;");
+        maindash.setStyle("-fx-background-color: white;");
+        messagedash.setStyle("-fx-background-color: white;");
+        cropankor.setStyle("-fx-background-color: white;");
 
-    @FXML
-    private AnchorPane dronecanvas; // The new AnchorPane for drone animation
+        maxWidth = cropankor.getPrefWidth();
+        maxHeight = cropankor.getPrefHeight();
 
-    private Canvas canvas; // Dynamically added canvas for animation
-    private GraphicsContext gc;
-
-    // Drone image and movement variables
-    private Image droneImage;
-    private double droneX = 50;
-    private double droneY = 50;
-    private double step = 2;
-
-    private double canvasWidth, canvasHeight;
-
-    // Direction control
-    private String direction = "RIGHT";
-
-    private AnimationTimer animationTimer;
-
-    // Initialize method
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        // Populate ChoiceBox
-        Drop.getItems().addAll(choices);
-
-        // Add a Canvas to the dronecanvas
-        canvas = new Canvas(dronecanvas.getPrefWidth(), dronecanvas.getPrefHeight());
-        dronecanvas.getChildren().add(canvas);
-
-        // Get GraphicsContext
-        gc = canvas.getGraphicsContext2D();
-
-        // Set canvas dimensions
-        canvasWidth = canvas.getWidth();
-        canvasHeight = canvas.getHeight();
-
-        // Load the drone image
-        droneImage = new Image(getClass().getResource("drone.jpg").toExternalForm());
-
-        // Draw initial labels
-        drawLabels();
-    }
-
-    // Draw text labels on the canvas
-    private void drawLabels() {
-        gc.setFill(Color.BLACK); // Set text color to black
-        gc.fillText("Cow", 100, 100);           // Position (x=100, y=100)
-        gc.fillText("Milk Storage", 300, 200); // Position (x=300, y=200)
-        gc.fillText("Livestock Area", 200, 400); // Position (x=200, y=400)
-    }
-
-    // Start animation timer
-    private void startAnimation() {
-        animationTimer = new AnimationTimer() {
-            @Override
-            public void handle(long now) {
-                moveDrone();
+        try {
+            File imageFile = new File("./src/application/droneimage.jpg");
+            if (imageFile.exists()) {
+                Image droneImageFile = new Image(imageFile.toURI().toString());
+                droneImage.setImage(droneImageFile);
+                droneImage.setFitWidth(100);
+                droneImage.setFitHeight(100);
+                droneImage.setPreserveRatio(true);
+            } else {
+                logMessage("Drone image not found.");
             }
-        };
-        animationTimer.start();
+        } catch (Exception e) {
+            e.printStackTrace();
+            logMessage("Error loading drone image.");
+        }
+
+        startScanButton.setOnAction(e -> {
+            logMessage("Drone started scanning.");
+            startScan();
+        });
+
+        stopScanButton.setOnAction(e -> {
+            logMessage("Drone stopped scanning.");
+            stopScan();
+        });
+
+        changeXButton.setOnAction(e -> {
+            logMessage("Change X button clicked.");
+            showInputDialog("Change X", true);
+        });
+
+        changeYButton.setOnAction(e -> {
+            logMessage("Change Y button clicked.");
+            showInputDialog("Change Y", false);
+        });
+
+        changeHeightButton.setOnAction(e -> logMessage("Change Height button clicked."));
+        changeWidthButton.setOnAction(e -> logMessage("Change Width button clicked."));
+
+        initializeFileTree();
     }
 
-    // Stop animation timer
-    private void stopAnimation() {
-        if (animationTimer != null) {
-            animationTimer.stop();
+    private void initializeFileTree() {
+        TreeItem<String> root = new TreeItem<>("Root");
+        TreeItem<String> barn = new TreeItem<>("Barn");
+        TreeItem<String> cow = new TreeItem<>("Cow");
+        TreeItem<String> milkStorage = new TreeItem<>("Milk Storage");
+        TreeItem<String> liveStorage = new TreeItem<>("Live Storage");
+        TreeItem<String> storeRoom = new TreeItem<>("Store Room");
+        barn.getChildren().addAll(cow, milkStorage, liveStorage, storeRoom);
+
+        TreeItem<String> crop = new TreeItem<>("Crop");
+
+        root.getChildren().addAll(barn, crop);
+
+        fileTree.setRoot(root);
+        fileTree.setShowRoot(true);
+
+        fileTree.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                String selectedItem = newValue.getValue();
+                showItemDialog(selectedItem);
+            }
+        });
+    }
+
+    private void showInputDialog(String prompt, boolean isX) {
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle(prompt);
+        dialog.setHeaderText("Enter the " + prompt + " value");
+        dialog.setContentText("Value:");
+
+        Optional<String> result = dialog.showAndWait();
+        result.ifPresent(value -> {
+            try {
+                if (isX) {
+                    updatePosition(Double.parseDouble(value), droneImage.getLayoutY());
+                } else {
+                    updatePosition(droneImage.getLayoutX(), Double.parseDouble(value));
+                }
+            } catch (NumberFormatException e) {
+                logMessage("Invalid input for " + prompt);
+            }
+        });
+    }
+
+    private void updatePosition(double x, double y) {
+        Platform.runLater(() -> {
+            droneImage.setLayoutX(x);
+            droneImage.setLayoutY(y);
+        });
+    }
+
+    private void showItemDialog(String item) {
+        Dialog<ButtonType> dialog = new Dialog<>();
+        dialog.setTitle("Manage Item");
+        dialog.setHeaderText("Manage the selected item: " + item);
+
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+
+        TextField nameField = new TextField(item);
+        nameField.setPromptText("Update name");
+        TextField xAxisField = new TextField("0");
+        xAxisField.setPromptText("X-axis");
+        TextField yAxisField = new TextField("0");
+        yAxisField.setPromptText("Y-axis");
+
+        grid.add(new Label("Update Name:"), 0, 0);
+        grid.add(nameField, 1, 0);
+        grid.add(new Label("X-axis:"), 0, 1);
+        grid.add(xAxisField, 1, 1);
+        grid.add(new Label("Y-axis:"), 0, 2);
+        grid.add(yAxisField, 1, 2);
+
+        ButtonType addButton = new ButtonType("Add Item", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().add(addButton);
+        dialog.getDialogPane().setContent(grid);
+
+        dialog.setResultConverter(dialogButton -> {
+            if (dialogButton == addButton) {
+                String newName = nameField.getText();
+                double x = Double.parseDouble(xAxisField.getText());
+                double y = Double.parseDouble(yAxisField.getText());
+                addItemToFarm(newName, x, y);
+                logMessage(newName + " added at position (" + x + ", " + y + ").");
+            }
+            return null;
+        });
+
+        dialog.showAndWait();
+    }
+
+    private void addItemToFarm(String name, double x, double y) {
+        if (!farmItems.containsKey(name)) {
+            farmItems.put(name, new Position(x, y));
+            createColorBlock(x, y, Color.BLUE, name);
         }
     }
 
-    // Move drone within the boundaries of dronecanvas
-    private void moveDrone() {
-        switch (direction) {
-            case "RIGHT":
-                droneX += step;
-                if (droneX + 50 >= canvasWidth) {
-                    direction = "DOWN";
+    private void createColorBlock(double x, double y, Color color, String text) {
+        Rectangle colorBlock = new Rectangle(x, y, 50, 50);
+        colorBlock.setFill(color);
+        colorBlock.setStroke(Color.BLACK);
+
+        Text colorText = new Text(x, y + 60, text);
+        colorText.setFill(Color.BLACK);
+
+        cropankor.getChildren().addAll(colorBlock, colorText);
+    }
+
+    private void deleteItemDialog() {
+        Dialog<ButtonType> dialog = new Dialog<>();
+        dialog.setTitle("Delete Item");
+        dialog.setHeaderText("Delete the selected item");
+
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+
+        TextField nameField = new TextField();
+        nameField.setPromptText("Enter item name");
+        TextField xAxisField = new TextField();
+        xAxisField.setPromptText("X-axis");
+        TextField yAxisField = new TextField();
+        yAxisField.setPromptText("Y-axis");
+
+        grid.add(new Label("Delete Item:"), 0, 0);
+        grid.add(nameField, 1, 0);
+        grid.add(new Label("X-axis:"), 0, 1);
+        grid.add(xAxisField, 1, 1);
+        grid.add(new Label("Y-axis:"), 0, 2);
+        grid.add(yAxisField, 1, 2);
+
+        ButtonType deleteButton = new ButtonType("Delete Item", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().add(deleteButton);
+        dialog.getDialogPane().setContent(grid);
+
+        dialog.setResultConverter(dialogButton -> {
+            if (dialogButton == deleteButton) {
+                String name = nameField.getText();
+                double x = Double.parseDouble(xAxisField.getText());
+                double y = Double.parseDouble(yAxisField.getText());
+                deleteItemFromFarm(name, x, y);
+                logMessage(name + " deleted from farm at position (" + x + ", " + y + ").");
+            }
+            return null;
+        });
+
+        dialog.showAndWait();
+    }
+
+    private void deleteItemFromFarm(String name, double x, double y) {
+        Position position = farmItems.get(name);
+        if (position != null) {
+            farmItems.remove(name);
+            cropankor.getChildren().removeIf(node -> {
+                if (node instanceof Rectangle) {
+                    Rectangle rect = (Rectangle) node;
+                    return rect.getX() == position.x && rect.getY() == position.y;
                 }
-                break;
-            case "DOWN":
-                droneY += step;
-                if (droneY + 50 >= canvasHeight) {
-                    direction = "LEFT";
-                }
-                break;
-            case "LEFT":
-                droneX -= step;
-                if (droneX <= 0) {
-                    direction = "UP";
-                }
-                break;
-            case "UP":
-                droneY -= step;
-                if (droneY <= 0) {
-                    direction = "RIGHT";
-                }
-                break;
+                return false;
+            });
         }
-
-        // Clear and redraw the canvas
-        gc.clearRect(0, 0, canvasWidth, canvasHeight);
-        drawLabels(); // Redraw labels after clearing
-        gc.drawImage(droneImage, droneX, droneY, 50, 50);
     }
 
-    // Start Scan Button Action
-    public void startScanAct(ActionEvent event) {
-        startAnimation();
-        messageField.appendText("Scanning started...\n");
+    private void logMessage(String message) {
+        Platform.runLater(() -> messageArea.appendText(message + "\n"));
     }
 
-    // Stop Scan Button Action
-    public void stopScanAct(ActionEvent event) {
-        stopAnimation();
-        messageField.appendText("Scanning stopped.\n");
+    private void startScan() {
+        if (!scanning) {
+            scanning = true;
+            new Thread(this::performScan).start();
+        }
     }
 
-    // Select Button Action
-    public void selectAct(ActionEvent event) {
-        String selectedOption = Drop.getValue();
-        messageField.appendText(selectedOption + " Selected\n");
+    private void stopScan() {
+        scanning = false;
     }
 
-    // Delete Button Action
-    public void deleteAct(ActionEvent event) {
-        String selectedOption = Drop.getValue();
-        messageField.appendText(selectedOption + " Deleted\n");
-    }
+    private void performScan() {
+        double x = droneImage.getLayoutX();
+        double y = droneImage.getLayoutY();
+        double step = 10;
+
+        while (scanning) {
+            try {
+                Thread.sleep(100);
+                x += step;
+                if (x > maxWidth - droneImage.getFitWidth() || x < 0) {
+                    step = -step;
+                    y += 50;
+                    if (y > maxHeight - droneImage.getFitHeight()) {
+                        y = 0;
+                    }
+                }
+                updatePosition(x, y);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
+    }
+}
+
+class Position {
+    double x, y;
+
+    Position(double x, double y) {
+        this.x = x;
+        this.y = y;
+    }
 }
