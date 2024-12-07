@@ -236,6 +236,59 @@ public class SampleController {
 
         dialog.showAndWait();
     }
+    private void showItemDialog(String item) {
+        Dialog<ButtonType> dialog = new Dialog<>();
+        dialog.setTitle("Manage Item");
+        dialog.setHeaderText("Manage the selected item: " + item);
+
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+
+        // Fields for item properties
+        TextField nameField = new TextField(item);
+        nameField.setPromptText("Update name");
+        TextField newNameField = new TextField();
+        newNameField.setPromptText("New name");
+        TextField xAxisField = new TextField("0");
+        xAxisField.setPromptText("X-axis");
+        TextField yAxisField = new TextField("0");
+        yAxisField.setPromptText("Y-axis");
+
+        // Adding fields to the grid
+        grid.add(new Label("Current Name:"), 0, 0);
+        grid.add(nameField, 1, 0);
+        grid.add(new Label("New Name:"), 0, 1);
+        grid.add(newNameField, 1, 1);
+        grid.add(new Label("X-axis:"), 0, 2);
+        grid.add(xAxisField, 1, 2);
+        grid.add(new Label("Y-axis:"), 0, 3);
+        grid.add(yAxisField, 1, 3);
+
+        ButtonType addButton = new ButtonType("Add Item", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().add(addButton);
+        dialog.getDialogPane().setContent(grid);
+
+        dialog.setResultConverter(dialogButton -> {
+            if (dialogButton == addButton) {
+                String currentName = nameField.getText();
+                String newName = newNameField.getText();
+                double x = Double.parseDouble(xAxisField.getText());
+                double y = Double.parseDouble(yAxisField.getText());
+
+                if (!newName.isEmpty()) {
+                    addItemToFarm(newName, x, y); // Add item with updated name
+                    logMessage(currentName + " updated to " + newName + " and added at position (" + x + ", " + y + ").");
+                } else {
+                    logMessage("New name cannot be empty.");
+                }
+            }
+            return null;
+        });
+
+        dialog.showAndWait();
+    }
+
 
     private void deleteItemFromFarm(String name, double x, double y) {
         Position position = farmItems.get(name);
@@ -245,22 +298,40 @@ public class SampleController {
                 if (node instanceof Rectangle) {
                     Rectangle rect = (Rectangle) node;
                     return rect.getX() == position.x && rect.getY() == position.y;
+                } else if (node instanceof Text) {
+                    Text text = (Text) node;
+                    return text.getText().equals(name) && text.getX() == position.x && text.getY() == position.y + 60;
                 }
                 return false;
             });
         }
     }
 
+
     private void logMessage(String message) {
         Platform.runLater(() -> messageArea.appendText(message + "\n"));
     }
 
     private void startScan() {
-        if (!scanning) {
-            scanning = true;
-            new Thread(this::performScan).start();
-        }
+        Timeline timeline = new Timeline(new KeyFrame(Duration.millis(100), e -> {
+            double x = droneImage.getLayoutX();
+            double y = droneImage.getLayoutY();
+            double step = 10;
+
+            x += step;
+            if (x > maxWidth - droneImage.getFitWidth() || x < 0) {
+                step = -step;
+                y += 50;
+                if (y > maxHeight - droneImage.getFitHeight()) {
+                    y = 0;
+                }
+            }
+            updatePosition(x, y);
+        }));
+        timeline.setCycleCount(Animation.INDEFINITE);
+        timeline.play();
     }
+
 
     private void stopScan() {
         scanning = false;
