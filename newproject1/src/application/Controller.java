@@ -15,7 +15,7 @@ public class Controller {
     @FXML
     private AnchorPane dashankr, cropankr, messageBox;
     @FXML
-    private Button startScanBtn, stopScanBtn, addItemBtn, deleteItemBtn;
+    private Button startScanButton, stopScanButton, addItemBtn, deleteItemBtn;
     @FXML
     private Label messageLabel;
     @FXML
@@ -36,10 +36,10 @@ public class Controller {
         });
 
         // Start Scan Button Action
-        startScanBtn.setOnAction(event -> startScanning());
+        startScanButton.setOnAction(event -> startScanning());
 
         // Stop Scan Button Action
-        stopScanBtn.setOnAction(event -> stopScanning());
+        stopScanButton.setOnAction(event -> stopScanning());
 
         // Add Item Button Action (custom logic)
         addItemBtn.setOnAction(event -> addItem());
