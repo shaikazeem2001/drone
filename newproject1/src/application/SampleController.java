@@ -316,8 +316,10 @@ public class SampleController {
         Platform.runLater(() -> messageArea.appendText(message + "\n"));
     }
 
+    private Timeline scanTimeline;
+
     private void startScan() {
-        Timeline timeline = new Timeline(new KeyFrame(Duration.millis(100), e -> {
+        scanTimeline = new Timeline(new KeyFrame(Duration.millis(100), e -> {
             double x = droneImage.getLayoutX();
             double y = droneImage.getLayoutY();
             double step = 10;
@@ -332,14 +334,17 @@ public class SampleController {
             }
             updatePosition(x, y);
         }));
-        timeline.setCycleCount(Animation.INDEFINITE);
-        timeline.play();
+        scanTimeline.setCycleCount(Animation.INDEFINITE);
+        scanTimeline.play();
     }
-
 
     private void stopScan() {
-        scanning = false;
+        if (scanTimeline != null) {
+            scanTimeline.stop();
+            logMessage("Drone scan stopped.");
+        }
     }
+
 
     private void performScan() {
         double x = droneImage.getLayoutX();
