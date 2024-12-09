@@ -75,15 +75,20 @@ public class Controller {
     }
 
     private void stopScanning() {
-        // Stop the scan and update message
-        messageLabel.setText("Message: Drone stopped.");
-
-        // Stop the animation
-        if (timeline != null) {
+        if (timeline != null && isScanning) {
             timeline.stop();  // Stop the timeline animation
+            messageLabel.setText("Message: Drone stopped.");
+        } else {
+            messageLabel.setText("Message: No active scan to stop.");
         }
+
         isScanning = false;
+
+        // Optionally reset the drone's position
+        droneImage.setLayoutX(50);
+        droneImage.setLayoutY(50);
     }
+
 
     private void addItem() {
         // Add your logic here for adding an item (e.g., add an object to the UI or database)

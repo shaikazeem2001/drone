@@ -319,35 +319,44 @@ public class SampleController {
     private Timeline scanTimeline;
 
     private void startScan() {
-        // Set the drone width to 50
+        if (scanTimeline != null && scanTimeline.getStatus() == Animation.Status.RUNNING) {
+            logMessage("Scanning is already in progress.");
+            return;
+        }
+
         droneImage.setFitWidth(50);
 
-        Timeline timeline = new Timeline(new KeyFrame(Duration.millis(100), e -> {
+        scanTimeline = new Timeline(new KeyFrame(Duration.millis(100), e -> {
             double x = droneImage.getLayoutX();
             double y = droneImage.getLayoutY();
             double step = 10;
 
-            // Move the drone vertically (from top to bottom)
+            // Move the drone vertically
             y += step;
 
-            // Check if it has reached the boundary (bottom) and reset if necessary
+            // Check boundaries and reset
             if (y > maxHeight - droneImage.getFitHeight()) {
                 y = 0; // Reset to top
-                x += 50; // Move horizontally to the next column
+                x += 50; // Move horizontally
                 if (x > maxWidth - droneImage.getFitWidth()) {
-                    x = 0; // Reset to leftmost position when moving out of bounds
+                    x = 0; // Reset to the leftmost position
                 }
             }
+
             updatePosition(x, y);
         }));
-        timeline.setCycleCount(Animation.INDEFINITE);
-        timeline.play();
+        scanTimeline.setCycleCount(Animation.INDEFINITE);
+        scanTimeline.play();
+        logMessage("Scanning started.");
     }
 
     private void stopScan() {
-        // Stop the scanning process by setting scanning flag to false
-        scanning = false;
+        if (scanTimeline != null) {
+            scanTimeline.stop();
+            logMessage("Scanning has been stopped.");
+        }
     }
+
 
 
     private void performScan() {
