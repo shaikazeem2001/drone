@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Accordion?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.control.TreeView?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane fx:id="screen2" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="791.0" prefWidth="1263.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.MainController">
+    <children>
+        <ListView layoutY="34.0" prefHeight="434.0" prefWidth="222.0" />
+        <Label layoutX="1.0" layoutY="4.0" prefHeight="33.0" prefWidth="222.0" text="ITEMS/ITEMS CONTAINERS">
+            <font>
+                <Font size="18.0" />
+            </font>
+        </Label>
+        <Label layoutX="255.0" layoutY="-1.0" prefHeight="42.0" prefWidth="114.0" text="MESSAGES">
+            <font>
+                <Font size="18.0" />
+            </font>
+        </Label>
+        <TextArea fx:id="statusTextArea" layoutX="255.0" layoutY="34.0" prefHeight="261.0" prefWidth="237.0" />
+        <Separator layoutX="549.0" layoutY="3.0" orientation="VERTICAL" prefHeight="800.0" prefWidth="5.0" />
+        <Button fx:id="checkWeatherButton" layoutX="52.0" layoutY="706.0" text="Check Weather" />
+        <AnchorPane fx:id="screen1" layoutX="540.0" layoutY="-4.0" minHeight="0.0" minWidth="0.0" prefHeight="791.0" prefWidth="723.0" style="-fx-background-color: lightgreen;">
+            <children>
+                <ImageView fx:id="droneImageView" fitHeight="65.0" fitWidth="90.0" layoutX="21.0" layoutY="22.0" pickOnBounds="true" preserveRatio="true">
+                    <image>
+                        <Image url="@drone.png" />
+                    </image>
+                </ImageView>
+                <Label layoutX="21.0" layoutY="110.0" text="COMMAND CENTER" />
+                <Rectangle arcHeight="5.0" arcWidth="5.0" fill="TRANSPARENT" height="148.0" stroke="BLACK" strokeType="INSIDE" width="200.0" />
+            <Pane fx:id="layoutPane" prefHeight="785.0" prefWidth="723.0">
+               <children>
+                  <Label layoutX="652.0" layoutY="22.0" text="(723, 791)" />
+               </children></Pane>
+            </children>
+        </AnchorPane>
+        <Button fx:id="scanFarmButton" layoutX="14.0" layoutY="752.0" mnemonicParsing="false" onAction="#handleScanFarm" text="Scan Farm" />
+        <Button layoutX="111.0" layoutY="752.0" mnemonicParsing="false" onAction="#handleVisitNode" text="VISIT ITEM" />
+          <AnchorPane layoutY="475.0" minHeight="0.0" minWidth="0.0" prefHeight="168.0" prefWidth="222.0">
+         <children>
+              <TextField fx:id="yField" layoutX="54.0" layoutY="65.0" promptText="Enter Y" />
+              <Label layoutX="32.0" layoutY="70.0" prefHeight="17.0" prefWidth="12.0" text="Y:" />
+      
+              <Label layoutX="15.0" layoutY="6.0" text="Name:" />
+              <TextField fx:id="nameField" layoutX="54.0" layoutY="1.0" promptText="Enter Name" />
+              
+              <Label layoutX="32.0" layoutY="38.0" text="X:" />
+              <TextField layoutX="54.0" layoutY="33.0" promptText="Enter X" fx:id="xField" />
+              <TextField fx:id="heightField" layoutX="54.0" layoutY="102.0" promptText="Enter Height" />
+              <Label layoutX="12.0" layoutY="107.0" text="Height:" />
+              <TextField fx:id="widthField" layoutX="54.0" layoutY="136.0" promptText="Enter Width" />
+              <Label layoutX="14.0" layoutY="141.0" text="Width:" />
+         </children>
+      </AnchorPane>
+      <TreeView fx:id="treeView" layoutX="1.0" layoutY="34.0" prefHeight="434.0" prefWidth="222.0" />
+      <Accordion layoutX="268.0" layoutY="346.0" />
+      <TitledPane animated="false" layoutX="256.0" layoutY="346.0" prefHeight="210.0" prefWidth="236.0" text="COMMANDS ON ITEM CONTAINER">
+        <content>
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="172.0" prefWidth="234.0">
+               <children>
+                    <Button fx:id="addsTheItem" layoutX="-2.0" layoutY="1.0" onAction="#handleAddItem" prefHeight="26.0" prefWidth="236.0" text="ADD ITEM" />
+                    <Button fx:id="handlesItemContainer" layoutX="-3.0" layoutY="27.0" onAction="#handleAddItemContainer" prefHeight="26.0" prefWidth="236.0" text="ADD ITEM CONTAINER" />
+                  <Button fx:id="deleteItemContainer" layoutX="-5.0" layoutY="53.0" mnemonicParsing="false" onAction="#handleDeleteItemContainer" prefHeight="26.0" prefWidth="243.0" text="DELETE ITEM CONTAINER" />
+                  <Button layoutX="-2.0" layoutY="77.0" mnemonicParsing="false" onAction="#handleChangeItemContainerDimension" prefHeight="26.0" prefWidth="236.0" text="CHANGE DIMENSION" />
+                  <Button layoutX="-1.0" layoutY="103.0" mnemonicParsing="false" onAction="#handleChangeItemContainerLocation" prefHeight="26.0" prefWidth="236.0" text="CHANGE LOCATION" />
+                  <Button fx:id="changeItemContainerName" layoutY="129.0" mnemonicParsing="false" onAction="#handleChangeItemContainerName" prefHeight="26.0" prefWidth="236.0" text="CHANGE NAME" />
+                  <Button layoutY="155.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="236.0" text="CHANGE LENGTH" />
+               </children>
+            </AnchorPane>
+        </content>
+      </TitledPane>
+      <TitledPane animated="false" layoutX="251.0" layoutY="577.0" prefHeight="183.0" prefWidth="237.0" text="COMMANDS ON ITEM">
+        <content>
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="105.0" prefWidth="235.0">
+               <children>
+                  <Button layoutX="-1.0" layoutY="1.0" mnemonicParsing="false" onAction="#handleChangeItemLocation" prefHeight="26.0" prefWidth="236.0" text="CHANGE LOCATION" />
+                  <Button layoutX="-1.0" layoutY="27.0" mnemonicParsing="false" onAction="#handleChangeItemDimension" prefHeight="26.0" prefWidth="236.0" text="CHANGE DIMENSION" />
+                  <Button fx:id="changeItemName" layoutX="-3.0" layoutY="53.0" mnemonicParsing="false" onAction="#handleChangeItemName" prefHeight="26.0" prefWidth="237.0" text="RENAME ITEM" />
+                  <Button fx:id="deleteItem" layoutY="80.0" mnemonicParsing="false" onAction="#handleDeleteItem" prefHeight="26.0" prefWidth="236.0" text="DELETE ITEM" />
+                  <Button fx:id="changePrice" layoutY="103.0" mnemonicParsing="false" onAction="#handleChangePrice" prefHeight="26.0" prefWidth="236.0" text="CHANGE PRICE" />
+                  <Button layoutX="1.0" layoutY="129.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="236.0" text="CHANGE LENGTH" />
+               </children>
+            </AnchorPane>
+        </content>
+      </TitledPane>
+      <TextField fx:id="priceField" layoutX="52.0" layoutY="672.0" promptText="Enter Price" />
+      <Label layoutX="14.0" layoutY="677.0" prefHeight="17.0" prefWidth="36.0" text="Price" />
+      <TextField layoutX="52.0" layoutY="642.0" promptText="Enter Length" />
+      <Label layoutX="13.0" layoutY="647.0" text="Length" />
+    </children>
+</AnchorPane>

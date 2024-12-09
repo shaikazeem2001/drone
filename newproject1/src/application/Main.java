@@ -1,27 +1,31 @@
 package application;
-
+	
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
-import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+
 
 public class Main extends Application {
+	@Override
+	public void start(Stage primaryStage) {
+		        singletonDashboard dashboard = singletonDashboard.getInstance();
+		        dashboard.initialize(primaryStage);
+		        dashboard.showDashboard();
+		try {
+			Parent root = FXMLLoader.load(getClass().getResource("Main.fxml"));
+			Scene scene = new Scene(root);
+			scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
+			primaryStage.setScene(scene);
+			primaryStage.setResizable(true);
+			primaryStage.show();
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
+	public static void main(String[] args) {		
+		launch(args);
+	}
 
-    @Override
-    public void start(Stage primaryStage) throws Exception {
-        // Load the FXML file
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("sample.fxml"));
-        AnchorPane root = loader.load();  // Loads the sample.fxml file
-
-        // Set the scene and show the stage
-        Scene scene = new Scene(root);
-        primaryStage.setScene(scene);
-        primaryStage.setTitle("Drone Management System");
-        primaryStage.show();
-    }
-
-    public static void main(String[] args) {
-        launch(args);  // Launch the JavaFX application
-    }
 }
