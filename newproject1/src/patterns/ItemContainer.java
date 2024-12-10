@@ -1,33 +1,47 @@
 package patterns;
 
-import java.util.ArrayList;
-import java.util.List;
+public class ItemContainer extends FarmComponent {
+    private String itemName;
+    private int quantity;
+    private double price;
 
-public class ItemContainer {
-    private List<FarmItem> items;
-
-    // Constructor for initializing the container with specific items
-    public ItemContainer(String itemName, int quantity, int width, int height) {
-        this.items = new ArrayList<>();
-        FarmItem item = new FarmItem(itemName, quantity);
-        // If width and height are relevant for the item, you can add logic here to use them
-        // For example, you might want to create a FarmComponent that includes width and height
-        addItem(item);  // Adding the item to the container
+    // Constructor
+    public ItemContainer(String name, int quantity, double price, double width, double height) {
+        super(name, "Container");  // Using "Container" as a type, can be changed
+        this.itemName = name;
+        this.quantity = quantity;
+        this.price = price;
+        setWidth(width);
+        setHeight(height);
     }
 
-    // Add an item to the container
-    public void addItem(FarmItem item) {
-        this.items.add(item);
+    // Getters and setters
+    public String getItemName() {
+        return itemName;
     }
 
-    // Get all items
-    public List<FarmItem> getItems() {
-        return items;
+    public void setItemName(String itemName) {
+        this.itemName = itemName;
     }
 
-    // Override toString method
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
+    }
+
     @Override
     public String toString() {
-        return "ItemContainer{" + "items=" + items + "}";
+        return "ItemContainer{itemName='" + itemName + "', quantity=" + quantity + ", price=" + price + "} " + super.toString();
     }
 }

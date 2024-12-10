@@ -3,12 +3,14 @@ package patterns;
 public class FarmItem extends FarmComponent {
     private String itemName;
     private int quantity;
+    private double price;
 
-    // Constructor
-    public FarmItem(String itemName, int quantity) {
-        super();  // Assuming FarmComponent has a default constructor
+    // Constructor with the required parameters
+    public FarmItem(String name, String type, String itemName, int quantity, double price) {
+        super(name, type);  // Call to parent class constructor
         this.itemName = itemName;
         this.quantity = quantity;
+        this.price = price;
     }
 
     // Getters and setters
@@ -28,8 +30,16 @@ public class FarmItem extends FarmComponent {
         this.quantity = quantity;
     }
 
+    public double getPrice() {
+        return price;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
+    }
+
     @Override
     public String toString() {
-        return "FarmItem{itemName='" + itemName + "', quantity=" + quantity + "}";
+        return "FarmItem{itemName='" + itemName + "', quantity=" + quantity + ", price=" + price + "} " + super.toString();
     }
 }

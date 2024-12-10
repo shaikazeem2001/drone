@@ -103,7 +103,7 @@ public class MainController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         layoutManager = new FarmLayoutManager(rootContainer, screen1, statusTextArea);
         treeViewManager = new TreeViewManager(treeView, layoutManager, rootContainer);
-        droneImageView.setImage(new Image("file:src/application/drone.png")); 
+        droneImageView.setImage(new Image("file:src/application/drone.jpg")); 
         droneImageView.setX(commandCenterX);
         droneImageView.setY(commandCenterY);
         TreeItem<String> rootItem = new TreeItem<>("Root");

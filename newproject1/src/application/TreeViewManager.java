@@ -95,6 +95,9 @@ public void deleteItemContainer(TreeItem<String> selectedNode) {
 }
 
 public FarmComponent findComponentByName(FarmComponent current, String name) {
+    if (current == null) {
+        return null; // Avoid NPE
+    }
     if (current.getName().equals(name)) {
         return current;
     }
@@ -108,4 +111,5 @@ public FarmComponent findComponentByName(FarmComponent current, String name) {
     }
     return null;
 }
+
 }
